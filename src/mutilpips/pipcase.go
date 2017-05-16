@@ -6,7 +6,6 @@ package pipelines
 import (
 	"log"
 	"time"
-	"sync"
 )
 
 func pip1(arg interface{}) interface{} {
@@ -41,15 +40,13 @@ func createPip() (txPip Pipeline) {
 
 func startPipCase() {
 	txPip := createPip()
-
 	indata := startProduceData()
-	outData := startProcessData()
-
-	txPip.setup(indata, outData) //if you don't neet the `indata`&`outdata`,just set them `nil`
-
+	//outData := startProcessData()
+	//txPip.setup(indata, outData) //if you don't neet the `indata`&`outdata`,just set them `nil`
+	txPip.setup(indata, nil)
 	txPip.start()
 
-	waitRoutine := sync.WaitGroup{}
-	waitRoutine.Add(1)
-	waitRoutine.Wait()
+	//waitRoutine := sync.WaitGroup{}
+	//waitRoutine.Add(1)
+	//waitRoutine.Wait()
 }
