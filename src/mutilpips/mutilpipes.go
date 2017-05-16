@@ -24,7 +24,6 @@ func (n *Node) start() {
 //each Node goroutine should run forver
 func (n *Node) runForever() {
 	for {
-		//logs.Info(n.name, ",in run forever")
 		err := n.run()
 		if err != nil {
 			log.Fatal(err)
@@ -40,11 +39,12 @@ func (n *Node) run() error {
 		log.Fatal(errors.New("read data from inputchannel error"))
 		return nil
 	}
-	//TODO  not good enough, how to support multi params and returns
+	//TODO not good enough, how to support multi params and returns
+	out := n.target(x)
 	if n.output == nil {
 		return nil
 	}
-	n.output <- n.target(x)
+	n.output <- out
 	return nil
 }
 
@@ -54,16 +54,22 @@ type Pipeline struct {
 
 /*
 setup pip: Combine all nodes
+actually the indata Node and outdata Node doesn't belong to the pipline, I just use their's output or input.
 Args:
 	indata (Node): the mothod produce data which will come in to the pipline
 	outdata (Node): data processing method when the pipeline handler is finished
 Returns:
 */
 func (p *Pipeline) setup(indata *Node, outdata *Node) {
-	inNode := []*Node{indata}
-	nodes_all := append(inNode, p.nodes...)
-	nodes_all = append(nodes_all, outdata)
-	p.connect(nodes_all)
+	var nodesAll []*Node = p.nodes
+	if indata != nil {
+		inNode := []*Node{indata}
+		nodesAll = append(inNode, nodesAll...)
+	}
+	if outdata != nil {
+		nodesAll = append(nodesAll, outdata)
+	}
+	p.connect(nodesAll)
 }
 
 //connect all nodes's output and input.
@@ -74,11 +80,9 @@ func (p *Pipeline) setup(indata *Node, outdata *Node) {
 	* * * * * * *	 * * * * * * *	  * * * * * * *	   * * * * * * *
 */
 func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
-
 	if len(nodes) == 0 {
 		return nil
 	}
-
 	head := nodes[0]
 	if head.cache == 0 {
 		head.cache = 10
