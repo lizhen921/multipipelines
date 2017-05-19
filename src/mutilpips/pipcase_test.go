@@ -1,11 +1,14 @@
 package pipelines
 
 import (
+	"sync"
 	"testing"
-	"time"
 )
 
 func TestStart(t *testing.T) {
 	startPipCase()
-	time.Sleep(time.Second * 100)
+	waitRoutine := sync.WaitGroup{}
+	waitRoutine.Add(1)
+	waitRoutine.Wait()
+	//time.Sleep(time.Second * 100)
 }

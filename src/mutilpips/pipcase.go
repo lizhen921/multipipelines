@@ -30,7 +30,7 @@ func pip3(arg interface{}) interface{} {
 func createPip() (txPip Pipeline) {
 	pipNodeSlice := make([]*Node, 0)
 	pipNodeSlice = append(pipNodeSlice, &Node{target: pip1, routineNum: 1, name: "pip1"})
-	pipNodeSlice = append(pipNodeSlice, &Node{target: pip2, routineNum: 1, name: "pip2"})
+	pipNodeSlice = append(pipNodeSlice, &Node{target: pip2, routineNum: 2, name: "pip2"})
 	pipNodeSlice = append(pipNodeSlice, &Node{target: pip3, routineNum: 1, name: "pip3"})
 	txPip = Pipeline{
 		nodes: pipNodeSlice,
@@ -41,9 +41,9 @@ func createPip() (txPip Pipeline) {
 func startPipCase() {
 	txPip := createPip()
 	indata := startProduceData()
-	//outData := startProcessData()
-	//txPip.setup(indata, outData) //if you don't neet the `indata`&`outdata`,just set them `nil`
-	txPip.setup(indata, nil)
+	outData := startProcessData()
+	txPip.setup(indata, outData) //if you don't neet the `indata`&`outdata`,just set them `nil`
+	//txPip.setup(indata, nil)
 	txPip.start()
 
 	//waitRoutine := sync.WaitGroup{}
