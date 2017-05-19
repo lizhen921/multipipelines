@@ -9,8 +9,8 @@ type Node struct {
 	target     func(interface{}) interface{}
 	input      chan interface{}
 	output     chan interface{}
-	routineNum int
-	cache      int
+	routineNum int //the number of goroutine
+	capacity   int //channel capacity
 	name       string
 }
 
@@ -84,11 +84,11 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 		return nil
 	}
 	head := nodes[0]
-	if head.cache == 0 {
-		head.cache = 10
+	if head.capacity == 0 {
+		head.capacity = 50
 	}
-	head.input = make(chan interface{}, head.cache)
-	head.output = make(chan interface{}, head.cache)
+	head.input = make(chan interface{}, head.capacity)
+	head.output = make(chan interface{}, head.capacity)
 	tail := nodes[1:]
 	head.output = p.connect(tail)
 	return head.input
