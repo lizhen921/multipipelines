@@ -34,6 +34,20 @@ func (n *Node) runForever() {
 
 //execute the Node method,and save the result in to the channel
 func (n *Node) run() error {
+	//TODO add timeout
+	//timeout := make(chan bool, 1)
+	//go func() {
+	//	time.Sleep(time.Second * 1) //等待1秒钟
+	//	timeout <- true
+	//}()
+	//
+	////然后，我们把timeout这个channel利用起来
+	//select {
+	//	case <-ch:
+	//	//从ch中读到数据
+	//	case <-timeout:
+	//	//一直没有从ch中读取到数据，但从timeout中读取到数据
+	//}
 	x, ok := <-n.input
 	if !ok {
 		log.Fatal(errors.New("read data from inputchannel error"))
@@ -72,7 +86,7 @@ func (p *Pipeline) setup(indata *Node, outdata *Node) {
 	p.connect(nodesAll)
 }
 
-//connect all nodes's output and input.
+//connect all nodes's output and input after .
 /*
 		indata			 node1			  node2			  outdata
 	* * * * * * *	 * * * * * * *	  * * * * * * *	   * * * * * * *
