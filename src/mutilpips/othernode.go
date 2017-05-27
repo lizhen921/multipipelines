@@ -12,6 +12,7 @@ type preNode struct {
 }
 
 func (p *preNode) produceData() {
+	//note you can init some datas before start produce
 	for i := 0; i < 20; i++ {
 		s := "produce data : " + strconv.Itoa(i)
 		log.Println(s)
