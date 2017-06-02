@@ -29,9 +29,9 @@ func pip3(arg interface{}) interface{} {
 
 func createPip() (txPip Pipeline) {
 	pipNodeSlice := make([]*Node, 0)
-	pipNodeSlice = append(pipNodeSlice, &Node{target: pip1, routineNum: 1, name: "pip1"})
-	pipNodeSlice = append(pipNodeSlice, &Node{target: pip2, routineNum: 2, name: "pip2"})
-	pipNodeSlice = append(pipNodeSlice, &Node{target: pip3, routineNum: 1, name: "pip3"})
+	pipNodeSlice = append(pipNodeSlice, &Node{target: pip1, name: "pip1", capacity: 5})
+	pipNodeSlice = append(pipNodeSlice, &Node{target: pip2, name: "pip2", routineNum: 2})
+	pipNodeSlice = append(pipNodeSlice, &Node{target: pip3, name: "pip3", timeout: 10})
 	txPip = Pipeline{
 		nodes: pipNodeSlice,
 	}

@@ -3,6 +3,7 @@ package pipelines
 import (
 	"errors"
 	"log"
+	"time"
 )
 
 type Node struct {
@@ -12,10 +13,14 @@ type Node struct {
 	routineNum int //the number of goroutine
 	capacity   int //channel capacity
 	name       string
+	timeout    int64
 }
 
 //Start the Node(goroutines) based on the routineNum
 func (n *Node) start() {
+	if n.routineNum == 0 {
+		n.routineNum = 1
+	}
 	for i := 0; i < n.routineNum; i++ {
 		go n.runForever()
 	}
@@ -34,31 +39,31 @@ func (n *Node) runForever() {
 
 //execute the Node method,and save the result in to the channel
 func (n *Node) run() error {
-	//TODO add timeout
-	//timeout := make(chan bool, 1)
-	//go func() {
-	//	time.Sleep(time.Second * 1) //等待1秒钟
-	//	timeout <- true
-	//}()
-	//
-	////然后，我们把timeout这个channel利用起来
-	//select {
-	//	case <-ch:
-	//	//从ch中读到数据
-	//	case <-timeout:
-	//	//一直没有从ch中读取到数据，但从timeout中读取到数据
-	//}
-	x, ok := <-n.input
-	if !ok {
-		log.Fatal(errors.New("read data from inputchannel error"))
+	isTimeout := make(chan bool, 1)
+	go func() {
+		time.Sleep(time.Second * time.Duration(n.timeout)) //等待
+		if n.timeout != 0 {
+			isTimeout <- true
+		}
+	}()
+	select {
+	case x, ok := <-n.input:
+		//从ch中读到数据
+		if !ok {
+			log.Println(errors.New("read data from inputchannel error"))
+			return nil
+		}
+		//TODO  not good enough, how to support multi params and returns
+		out := n.target(x)
+		if n.output == nil || out == nil {
+			return nil
+		}
+		n.output <- out
+	case <-isTimeout:
+		//一直没有从ch中读取到数据，但从timeout中读取到数据
+		log.Println("read data timeout")
 		return nil
 	}
-	//TODO not good enough, how to support multi params and returns
-	out := n.target(x)
-	if n.output == nil || out == nil {
-		return nil
-	}
-	n.output <- out
 	return nil
 }
 
