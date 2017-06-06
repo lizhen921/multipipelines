@@ -33,7 +33,7 @@ func createPip() (txPip Pipeline) {
 	pipNodeSlice = append(pipNodeSlice, &Node{Target: pip2, Name: "pip2", RoutineNum: 2})
 	pipNodeSlice = append(pipNodeSlice, &Node{Target: pip3, Name: "pip3", Timeout: 10})
 	txPip = Pipeline{
-		nodes: pipNodeSlice,
+		Nodes: pipNodeSlice,
 	}
 	return txPip
 }

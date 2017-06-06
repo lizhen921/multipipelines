@@ -68,7 +68,7 @@ func (n *Node) run() error {
 }
 
 type Pipeline struct {
-	nodes []*Node
+	Nodes []*Node
 }
 
 /*
@@ -80,7 +80,7 @@ Args:
 Returns:
 */
 func (p *Pipeline) setup(indata *Node, outdata *Node) {
-	var nodesAll []*Node = p.nodes
+	var nodesAll []*Node = p.Nodes
 	if indata != nil {
 		inNode := []*Node{indata}
 		nodesAll = append(inNode, nodesAll...)
@@ -115,7 +115,7 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 
 // for..range start each Node
 func (p *Pipeline) start() {
-	for index, _ := range p.nodes {
-		p.nodes[index].start()
+	for index, _ := range p.Nodes {
+		p.Nodes[index].start()
 	}
 }
