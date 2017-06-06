@@ -1,7 +1,7 @@
 /*
 
  */
-package pipelines
+package multipipes
 
 import (
 	"log"
