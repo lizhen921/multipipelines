@@ -39,6 +39,13 @@ func (n *Node) runForever() {
 
 //execute the Node method,and save the result in to the channel
 func (n *Node) run() error {
+	if n.Input == nil {
+		out := n.Target(nil)
+		if n.Output == nil || out == nil {
+			return nil
+		}
+		n.Output <- out
+	}
 	isTimeout := make(chan bool, 1)
 	go func() {
 		time.Sleep(time.Second * time.Duration(n.Timeout)) //等待
@@ -89,6 +96,7 @@ func (p *Pipeline) setup(indata *Node, outdata *Node) {
 		nodesAll = append(nodesAll, outdata)
 	}
 	p.connect(nodesAll)
+	nodesAll[0].Input = nil
 }
 
 //connect all nodes's output and input after .
