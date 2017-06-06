@@ -86,7 +86,7 @@ Args:
 	outdata (Node): data processing method when the pipeline handler is finished
 Returns:
 */
-func (p *Pipeline) setup(indata *Node, outdata *Node) {
+func (p *Pipeline) Setup(indata *Node, outdata *Node) {
 	var nodesAll []*Node = p.Nodes
 	if indata != nil {
 		inNode := []*Node{indata}
@@ -122,7 +122,7 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 }
 
 // for..range start each Node
-func (p *Pipeline) start() {
+func (p *Pipeline) Start() {
 	for index, _ := range p.Nodes {
 		p.Nodes[index].start()
 	}
