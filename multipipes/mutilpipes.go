@@ -39,13 +39,6 @@ func (n *Node) runForever() {
 
 //execute the Node method,and save the result in to the channel
 func (n *Node) run() error {
-	if n.Input == nil {
-		out := n.Target(nil)
-		if n.Output == nil || out == nil {
-			return nil
-		}
-		n.Output <- out
-	}
 	isTimeout := make(chan bool, 1)
 	go func() {
 		time.Sleep(time.Second * time.Duration(n.Timeout)) //等待
@@ -78,27 +71,6 @@ type Pipeline struct {
 	Nodes []*Node
 }
 
-/*
-setup pip: Combine all nodes
-actually the indata Node and outdata Node doesn't belong to the pipline, I just use their's output or input.
-Args:
-	indata (Node): the mothod produce data which will come in to the pipline
-	outdata (Node): data processing method when the pipeline handler is finished
-Returns:
-*/
-func (p *Pipeline) Setup(indata *Node, outdata *Node) {
-	var nodesAll []*Node = p.Nodes
-	if indata != nil {
-		inNode := []*Node{indata}
-		nodesAll = append(inNode, nodesAll...)
-	}
-	if outdata != nil {
-		nodesAll = append(nodesAll, outdata)
-	}
-	p.connect(nodesAll)
-	nodesAll[0].Input = nil
-}
-
 //connect all nodes's output and input after .
 /*
 		indata			 node1			  node2			  outdata
@@ -119,6 +91,26 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 	tail := nodes[1:]
 	head.Output = p.connect(tail)
 	return head.Input
+}
+
+/*
+setup pip: Combine all nodes
+actually the indata Node and outdata Node doesn't belong to the pipline, I just use their's output or input.
+Args:
+	indata (Node): the mothod produce data which will come in to the pipline
+	outdata (Node): data processing method when the pipeline handler is finished
+Returns:
+*/
+func (p *Pipeline) Setup(indata *Node, outdata *Node) {
+	var nodesAll []*Node = p.Nodes
+	if indata != nil {
+		inNode := []*Node{indata}
+		nodesAll = append(inNode, nodesAll...)
+	}
+	if outdata != nil {
+		nodesAll = append(nodesAll, outdata)
+	}
+	p.connect(nodesAll)
 }
 
 // for..range start each Node

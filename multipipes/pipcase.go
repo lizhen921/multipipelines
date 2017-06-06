@@ -42,7 +42,7 @@ func startPipCase() {
 	txPip := createPip()
 	indata := startProduceData()
 	outData := startProcessData()
-	txPip.Setup(indata, outData) //if you don't neet the `indata`&`outdata`,just set them `nil`
+	txPip.Setup(indata, outData)
 	//txPip.setup(indata, nil)
 	txPip.Start()
 
