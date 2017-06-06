@@ -7,21 +7,21 @@ import (
 )
 
 type Node struct {
-	target     func(interface{}) interface{}
-	input      chan interface{}
-	output     chan interface{}
-	routineNum int //the number of goroutine
-	capacity   int //channel capacity
-	name       string
-	timeout    int64
+	Target     func(interface{}) interface{}
+	Input      chan interface{}
+	Output     chan interface{}
+	RoutineNum int //the number of goroutine
+	Capacity   int //channel capacity
+	Name       string
+	Timeout    int64
 }
 
 //Start the Node(goroutines) based on the routineNum
 func (n *Node) start() {
-	if n.routineNum == 0 {
-		n.routineNum = 1
+	if n.RoutineNum == 0 {
+		n.RoutineNum = 1
 	}
-	for i := 0; i < n.routineNum; i++ {
+	for i := 0; i < n.RoutineNum; i++ {
 		go n.runForever()
 	}
 }
@@ -41,24 +41,24 @@ func (n *Node) runForever() {
 func (n *Node) run() error {
 	isTimeout := make(chan bool, 1)
 	go func() {
-		time.Sleep(time.Second * time.Duration(n.timeout)) //等待
-		if n.timeout != 0 {
+		time.Sleep(time.Second * time.Duration(n.Timeout)) //等待
+		if n.Timeout != 0 {
 			isTimeout <- true
 		}
 	}()
 	select {
-	case x, ok := <-n.input:
+	case x, ok := <-n.Input:
 		//从ch中读到数据
 		if !ok {
 			log.Println(errors.New("read data from inputchannel error"))
 			return nil
 		}
 		//TODO  not good enough, how to support multi params and returns
-		out := n.target(x)
-		if n.output == nil || out == nil {
+		out := n.Target(x)
+		if n.Output == nil || out == nil {
 			return nil
 		}
-		n.output <- out
+		n.Output <- out
 	case <-isTimeout:
 		//一直没有从ch中读取到数据，但从timeout中读取到数据
 		log.Println("read data timeout")
@@ -103,14 +103,14 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 		return nil
 	}
 	head := nodes[0]
-	if head.capacity == 0 {
-		head.capacity = 50
+	if head.Capacity == 0 {
+		head.Capacity = 50
 	}
-	head.input = make(chan interface{}, head.capacity)
-	head.output = make(chan interface{}, head.capacity)
+	head.Input = make(chan interface{}, head.Capacity)
+	head.Output = make(chan interface{}, head.Capacity)
 	tail := nodes[1:]
-	head.output = p.connect(tail)
-	return head.input
+	head.Output = p.connect(tail)
+	return head.Input
 }
 
 // for..range start each Node

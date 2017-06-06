@@ -16,7 +16,7 @@ func (p *preNode) produceData() {
 	for i := 0; i < 20; i++ {
 		s := "produce data : " + strconv.Itoa(i)
 		log.Println(s)
-		p.node.output <- s
+		p.node.Output <- s
 		time.Sleep(time.Second)
 	}
 }
@@ -35,7 +35,7 @@ type afterNode struct {
 
 func (a *afterNode) processResult() {
 	for {
-		s := <-a.node.input
+		s := <-a.node.Input
 		log.Println("get final data : ", s)
 		time.Sleep(time.Second)
 	}
