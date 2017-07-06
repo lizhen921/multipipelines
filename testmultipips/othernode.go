@@ -1,13 +1,14 @@
-package multipipes
+package testmultipips
 
 import (
 	"log"
+	"mutilpiplines/multipipes"
 	"strconv"
 	"time"
 )
 
 type preNode struct {
-	node Node
+	node multipipes.Node
 	note string
 }
 
@@ -20,7 +21,7 @@ func (p *preNode) produceData() {
 		time.Sleep(time.Second)
 	}
 }
-func startProduceData() *Node {
+func startProduceData() *multipipes.Node {
 	pre := &preNode{
 		note: "just do nothing",
 	}
@@ -29,7 +30,7 @@ func startProduceData() *Node {
 }
 
 type afterNode struct {
-	node   Node
+	node   multipipes.Node
 	messge string
 }
 
@@ -40,7 +41,7 @@ func (a *afterNode) processResult() {
 		time.Sleep(time.Second)
 	}
 }
-func startProcessData() *Node {
+func startProcessData() *multipipes.Node {
 	after := afterNode{
 		messge: "just do nothing",
 	}

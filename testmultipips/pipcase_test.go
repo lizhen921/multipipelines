@@ -1,4 +1,4 @@
-package multipipes
+package testmultipips
 
 import (
 	"sync"
