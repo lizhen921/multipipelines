@@ -90,8 +90,12 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 	if head.Capacity == 0 {
 		head.Capacity = 50
 	}
-	head.Input = make(chan interface{}, head.Capacity)
-	head.Output = make(chan interface{}, head.Capacity)
+	if head.Input == nil {
+		head.Input = make(chan interface{}, head.Capacity)
+	}
+	if head.Output == nil {
+		head.Output = make(chan interface{}, head.Capacity)
+	}
 	tail := nodes[1:]
 	head.Output = p.connect(tail)
 	return head.Input
