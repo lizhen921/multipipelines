@@ -2,7 +2,7 @@ package testmultipips
 
 import (
 	"log"
-	"mutilpiplines/multipipes"
+	"multipipelines/multipipes"
 	"strconv"
 	"time"
 )

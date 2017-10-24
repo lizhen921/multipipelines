@@ -61,8 +61,12 @@ func (n *Node) run() error {
 		n.Output <- out
 	case <-isTimeout:
 		//一直没有从ch中读取到数据，但从timeout中读取到数据
-		log.Println("read data timeout")
-		return nil
+		log.Println(n.Name, " read data timeout")
+		out := n.Target("timeout")
+		if n.Output == nil || out == nil {
+			return nil
+		}
+		n.Output <- out
 	}
 	return nil
 }
