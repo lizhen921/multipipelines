@@ -7,9 +7,9 @@ import (
 )
 
 type Node struct {
-	Target     func(interface{}) interface{}
-	Input      chan interface{}
-	Output     chan interface{}
+	Target     func(map[string]interface{}) map[string]interface{}
+	Input      chan map[string]interface{}
+	Output     chan map[string]interface{}
 	RoutineNum int //the number of goroutine
 	Capacity   int //channel capacity
 	Name       string
@@ -62,7 +62,8 @@ func (n *Node) run() error {
 	case <-isTimeout:
 		//一直没有从ch中读取到数据，但从timeout中读取到数据
 		log.Println(n.Name, " read data timeout")
-		out := n.Target("timeout")
+		timeout := map[string]interface{}{"timeout": true}
+		out := n.Target(timeout)
 		if n.Output == nil || out == nil {
 			return nil
 		}
@@ -82,7 +83,7 @@ type Pipeline struct {
 	*	   out<-*----*-in 	out<-*----*-in	 out<-*----*-in		   *
 	* * * * * * *	 * * * * * * *	  * * * * * * *	   * * * * * * *
 */
-func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
+func (p *Pipeline) connect(nodes []*Node) (ch chan map[string]interface{}) {
 	if len(nodes) == 0 {
 		return nil
 	}
@@ -91,10 +92,10 @@ func (p *Pipeline) connect(nodes []*Node) (ch chan interface{}) {
 		head.Capacity = 50
 	}
 	if head.Input == nil {
-		head.Input = make(chan interface{}, head.Capacity)
+		head.Input = make(chan map[string]interface{}, head.Capacity)
 	}
 	if head.Output == nil {
-		head.Output = make(chan interface{}, head.Capacity)
+		head.Output = make(chan map[string]interface{}, head.Capacity)
 	}
 	tail := nodes[1:]
 	head.Output = p.connect(tail)
@@ -110,7 +111,7 @@ Args:
 Returns:
 */
 func (p *Pipeline) Setup(indata *Node, outdata *Node) {
-	var nodesAll []*Node = p.Nodes
+	var nodesAll = p.Nodes
 	if indata != nil {
 		inNode := []*Node{indata}
 		nodesAll = append(inNode, nodesAll...)
@@ -123,7 +124,7 @@ func (p *Pipeline) Setup(indata *Node, outdata *Node) {
 
 // for..range start each Node
 func (p *Pipeline) Start() {
-	for index, _ := range p.Nodes {
+	for index := range p.Nodes {
 		p.Nodes[index].start()
 	}
 }
