@@ -2,10 +2,6 @@
 
 `multipipes` is a simple Go module to create pipelines to process data.
 
-## 流式任务处理模式
-
-Pipline is a simple Go module to create pipelines to process data.
-
 **适合场景：**
 
 数据需经过多个阶段处理，每个阶段耗时不同，应使用不同的并发处理
